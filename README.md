@@ -4,6 +4,9 @@ A browser-based tool to construct and validate **Shiptheory Shipment API** paylo
 
 It is currently published at https://aisimon.github.io/shipment-tool/
 
+![Shipment Payload Builder Screenshot](image/screenshot-2026-01-30.png)
+
+
 ## ✨ Features
 - **Dynamic Payloads**: Live JSON preview as you edit.
 - **Address Templates**: Preset sender/recipient JSON blocks.
