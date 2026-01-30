@@ -199,7 +199,7 @@
                                 <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider">Data is out of sync with UI</span>
                             </div>
                             <div class="p-4 max-h-[calc(100vh-200px)]">
-                                <textarea id="payload-preview" class="w-full h-96 min-h-[500px] text-xs md:text-sm font-mono text-blue-300 bg-transparent border-none outline-none resize-none custom-scrollbar" spellcheck="false"></textarea>
+                                <textarea id="payload-preview" class="w-full h-[650px] min-h-[650px] text-xs md:text-sm font-mono text-blue-300 bg-transparent border-none outline-none resize-none custom-scrollbar" spellcheck="false"></textarea>
                             </div>
                         </div>
                     </div>
@@ -274,8 +274,8 @@
                 package_type: "",
                 un_number: "",
                 packing_group: "",
-                volume: "",
-                weight: "",
+                amount: "",
+                unit: "g",
                 is_accessible: false
             }
         };
@@ -308,6 +308,11 @@
             { code: "III", name: "III" }
         ];
 
+        const dgUnits = [
+            { code: "ml", name: "ml" },
+            { code: "g", name: "g" },
+        ];
+
         const defaultDg = {
             category: "FRDG",
             package_type: "BOX",
@@ -315,8 +320,8 @@
             class: "3",
             packing_group: "",
             proper_shipping_name: "Gasoline",
-            quantity: "",
-            uom: "L"
+            amount: "",
+            unit: "g"
         };
 
         // --- State ---
@@ -522,12 +527,14 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Volume (ml)</label>
-                                <input type="number" class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none" value="${product.dgDetails.volume}" oninput="updateProductField(${idx}, 'dgDetails', this.value, 'volume')">
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Amount</label>
+                                <input type="number" step="0.001" class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none" value="${product.dgDetails.amount}" oninput="updateProductField(${idx}, 'dgDetails', this.value, 'amount')">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Weight (kg)</label>
-                                <input type="number" step="0.001" class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none" value="${product.dgDetails.weight}" oninput="updateProductField(${idx}, 'dgDetails', this.value, 'weight')">
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Unit</label>
+                                <select class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none bg-white" onchange="updateProductField(${idx}, 'dgDetails', this.value, 'unit')">
+                                    ${dgUnits.map(u => `<option value="${u.code}" ${product.dgDetails.unit === u.code ? 'selected' : ''}>${u.name}</option>`).join('')}
+                                </select>
                             </div>
                             <div class="flex items-center gap-3 pt-5">
                                 <label class="relative inline-flex items-center cursor-pointer">
@@ -608,7 +615,7 @@
                     delete cleanedProduct.dgDetails;
 
                     if (p.includeDG) {
-                        const cleanedDG = cleanObject(p.dgDetails, ['volume', 'weight']);
+                        const cleanedDG = cleanObject(p.dgDetails, ['amount']);
                         // Ensure is_dangerous is set based on the toggle state, or explicitly in details
                         cleanedDG.is_dangerous = true;
 
