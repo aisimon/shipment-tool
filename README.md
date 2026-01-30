@@ -24,3 +24,8 @@ Visit the published page https://aisimon.github.io/shipment-tool/, or hosted it 
 
 ## Tech
 HTML5, Vanilla JS, [Tailwind CSS](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/).
+
+## Roadmap or todo
+- Allow entering access token to directly POST to Shiptheory to create shipments. Never save access token.
+- Add more sample addreses for different countries
+- Add more realistic commodity data or product data
