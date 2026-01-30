@@ -276,7 +276,7 @@
                 packing_group: "",
                 amount: "",
                 unit: "g",
-                is_accessible: false
+                is_accessible: ""
             }
         };
 
@@ -536,12 +536,13 @@
                                     ${dgUnits.map(u => `<option value="${u.code}" ${product.dgDetails.unit === u.code ? 'selected' : ''}>${u.name}</option>`).join('')}
                                 </select>
                             </div>
-                            <div class="flex items-center gap-3 pt-5">
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only toggle-dg-instance" ${product.dgDetails.is_accessible ? 'checked' : ''} onchange="updateProductField(${idx}, 'dgDetails', this.checked, 'is_accessible')">
-                                    <div class="w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all"></div>
-                                    <span class="ml-2 text-[10px] font-medium text-amber-900 uppercase">IATA Accessible</span>
-                                </label>
+                            <div>
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">IATA Accessible</label>
+                                <select class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none bg-white" onchange="updateProductField(${idx}, 'dgDetails', this.value, 'is_accessible')">
+                                    <option value="" ${product.dgDetails.is_accessible === "" ? 'selected' : ''}></option>
+                                    <option value="true" ${product.dgDetails.is_accessible === "true" || product.dgDetails.is_accessible === true ? 'selected' : ''}>True</option>
+                                    <option value="false" ${product.dgDetails.is_accessible === "false" || product.dgDetails.is_accessible === false ? 'selected' : ''}>False</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -560,7 +561,7 @@
             updatePayload();
         }
 
-        function cleanObject(obj, numFields = []) {
+        function cleanObject(obj, numFields = [], boolFields = []) {
             const cleaned = {};
             Object.keys(obj).forEach(key => {
                 const val = obj[key];
@@ -568,6 +569,8 @@
                     if (numFields.includes(key)) {
                         const parsed = parseFloat(val);
                         cleaned[key] = isNaN(parsed) ? val : parsed;
+                    } else if (boolFields.includes(key)) {
+                        cleaned[key] = val === 'true' || val === true;
                     } else {
                         cleaned[key] = val;
                     }
@@ -615,7 +618,7 @@
                     delete cleanedProduct.dgDetails;
 
                     if (p.includeDG) {
-                        const cleanedDG = cleanObject(p.dgDetails, ['amount']);
+                        const cleanedDG = cleanObject(p.dgDetails, ['amount'], ['is_accessible']);
                         // Ensure is_dangerous is set based on the toggle state, or explicitly in details
                         cleanedDG.is_dangerous = true;
 
