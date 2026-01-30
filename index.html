@@ -104,11 +104,13 @@
                                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                                 </button>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer mt-2">
-                                <input type="checkbox" id="append-countries" class="sr-only toggle-checkbox">
-                                <div class="toggle-label w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all"></div>
-                                <span class="ml-2 text-[10px] font-medium text-slate-500">Append Country Codes</span>
-                            </label>
+                            <div class="flex items-center gap-4 mt-2">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="append-countries" class="sr-only toggle-checkbox">
+                                    <div class="toggle-label w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all"></div>
+                                    <span class="ml-2 text-[10px] font-medium text-slate-500">Append Country Codes</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="flex flex-col gap-2">
                             <label class="block text-[10px] uppercase font-bold text-slate-400">Reference 2</label>
@@ -150,22 +152,37 @@
                 </section>
 
                 <!-- Addresses -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <div class="flex items-center gap-2 mb-4 text-blue-600 font-semibold">
-                            <i data-lucide="user" class="w-5 h-5"></i>
-                            <h2>Sender</h2>
-                        </div>
-                        <textarea id="sender-json" class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500" spellcheck="false"></textarea>
-                    </section>
-                    <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <div class="flex items-center gap-2 mb-4 text-indigo-600 font-semibold">
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-2 text-indigo-600 font-semibold">
                             <i data-lucide="map-pin" class="w-5 h-5"></i>
-                            <h2>Recipient</h2>
+                            <h2>Addresses</h2>
                         </div>
-                        <textarea id="recipient-json" class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500" spellcheck="false"></textarea>
-                    </section>
-                </div>
+                        <div class="flex items-center">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="show-addresses" class="sr-only toggle-checkbox" checked>
+                                <div class="toggle-label w-11 h-6 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                <span class="ml-3 text-sm font-medium text-slate-600">Show Addresses</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="addresses-panel" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                             <div class="flex items-center gap-2 mb-2 text-blue-600 font-semibold text-[10px] uppercase tracking-wider">
+                                <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                                <span>Sender Details</span>
+                            </div>
+                            <textarea id="sender-json" class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500" spellcheck="false"></textarea>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-2 text-indigo-600 font-semibold text-[10px] uppercase tracking-wider">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                                <span>Recipient Details</span>
+                            </div>
+                            <textarea id="recipient-json" class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500" spellcheck="false"></textarea>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- Products -->
                 <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
@@ -358,6 +375,7 @@
             senderJson: JSON.stringify(defaultSender, null, 2),
             recipientJson: JSON.stringify(defaultRecipient, null, 2),
             includeProducts: true,
+            showAddresses: true,
             products: [JSON.parse(JSON.stringify(defaultProduct))],
             shipmentDetail: {
                 weight: "2.6",
@@ -384,7 +402,9 @@
             copyBtn: document.getElementById('copy-btn'),
             copyText: document.getElementById('copy-text'),
             syncBtn: document.getElementById('sync-btn'),
-            syncBanner: document.getElementById('sync-banner')
+            syncBanner: document.getElementById('sync-banner'),
+            showAddresses: document.getElementById('show-addresses'),
+            addressesPanel: document.getElementById('addresses-panel')
         };
 
         // --- Initialization ---
@@ -392,12 +412,19 @@
             els.ref1.value = state.reference;
             els.ref2.value = state.reference2;
             els.appendCountries.checked = state.appendCountries;
+            els.showAddresses.checked = state.showAddresses;
+            els.includeProducts.checked = state.includeProducts;
             els.senderJson.value = state.senderJson;
             els.recipientJson.value = state.recipientJson;
             els.shipWeight.value = state.shipDetail?.weight || state.shipmentDetail.weight;
             els.shipParcels.value = state.shipmentDetail.parcels;
             els.shipValue.value = state.shipmentDetail.value;
             els.shipMetadata.value = state.shipmentDetail.rules_metadata;
+
+            // Sync visibility
+            els.addressesPanel.style.display = state.showAddresses ? 'grid' : 'none';
+            els.productsContainer.style.display = state.includeProducts ? 'block' : 'none';
+            els.syncBtn.style.display = state.includeProducts ? 'flex' : 'none';
 
             attachListeners();
             renderProducts();
@@ -431,6 +458,11 @@
                 els.productsContainer.style.display = e.target.checked ? 'block' : 'none';
                 els.syncBtn.style.display = e.target.checked ? 'flex' : 'none';
                 updatePayload();
+            });
+
+            els.showAddresses.addEventListener('change', (e) => {
+                state.showAddresses = e.target.checked;
+                els.addressesPanel.style.display = e.target.checked ? 'grid' : 'none';
             });
 
             els.payloadPreview.addEventListener('input', () => {
