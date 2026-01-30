@@ -278,9 +278,10 @@
             qty: "1",
             value: "10.0",
             weight: "0.5",
-            commodity_code: "12345678",
-            country_of_manufacture: "GB",
+            commodity_code: "",
+            country_of_manufacture: "",
             includeDG: false,
+            includeCommodity: false,
             dgDetails: {
                 is_dangerous: true,
                 category: "",
@@ -290,6 +291,12 @@
                 amount: "",
                 unit: "g",
                 is_accessible: ""
+            },
+            commodityDetails: {
+                commodity_code: "520811",
+                commodity_description: "Cotton cloth, plain weave, unbleached",
+                commodity_manucountry: "GBR",
+                commodity_composition: "Cotton"
             }
         };
 
@@ -559,6 +566,45 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="border-t border-slate-200 pt-4 mt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2 text-blue-600 font-semibold text-xs tracking-wider uppercase">
+                                <i data-lucide="scroll-text" class="w-4 h-4"></i>
+                                <span>Commodity Details</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button onclick="copyCommodityToAll(${idx})" class="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 hover:text-blue-500 transition-colors bg-slate-100 px-2 py-1 rounded" title="Copy these commodity details to all other products">
+                                    <i data-lucide="copy" class="w-3 h-3"></i>
+                                    Copy to All
+                                </button>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only toggle-commodity-instance" ${product.includeCommodity ? 'checked' : ''} onchange="toggleProductCommodity(${idx}, this.checked)">
+                                    <div class="w-9 h-5 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                    <span class="ml-2 text-[10px] font-medium text-slate-500">Enable</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="commodity-fields-${idx}" class="${product.includeCommodity ? '' : 'hidden'} grid grid-cols-2 gap-3 p-4 bg-blue-50/50 rounded-lg border border-blue-100">
+                             <div>
+                                <label class="block text-[10px] font-bold text-blue-700 mb-1">Commodity Code</label>
+                                <input class="w-full text-xs p-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-500 outline-none" value="${product.commodityDetails.commodity_code}" oninput="updateProductField(${idx}, 'commodityDetails', this.value, 'commodity_code')">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-700 mb-1">Country of Manufacture</label>
+                                <input class="w-full text-xs p-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-500 outline-none" value="${product.commodityDetails.commodity_manucountry}" oninput="updateProductField(${idx}, 'commodityDetails', this.value, 'commodity_manucountry')">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-700 mb-1">Composition</label>
+                                <input class="w-full text-xs p-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-500 outline-none" value="${product.commodityDetails.commodity_composition}" oninput="updateProductField(${idx}, 'commodityDetails', this.value, 'commodity_composition')">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-700 mb-1">Description</label>
+                                <input class="w-full text-xs p-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-500 outline-none" value="${product.commodityDetails.commodity_description}" oninput="updateProductField(${idx}, 'commodityDetails', this.value, 'commodity_description')">
+                            </div>
+                        </div>
+                    </div>
                 `;
                 els.productsContainer.appendChild(div);
             });
@@ -571,6 +617,26 @@
             if (container) {
                 container.classList.toggle('hidden', !checked);
             }
+            updatePayload();
+        }
+
+        function toggleProductCommodity(idx, checked) {
+            state.products[idx].includeCommodity = checked;
+            const container = document.getElementById(`commodity-fields-${idx}`);
+            if (container) {
+                container.classList.toggle('hidden', !checked);
+            }
+            updatePayload();
+        }
+
+        function copyCommodityToAll(idx) {
+            const source = state.products[idx].commodityDetails;
+            const isEnabled = state.products[idx].includeCommodity;
+            state.products.forEach(p => {
+                p.commodityDetails = { ...source };
+                p.includeCommodity = isEnabled;
+            });
+            renderProducts();
             updatePayload();
         }
 
@@ -629,6 +695,8 @@
                     // Exclude internal state from final payload
                     delete cleanedProduct.includeDG;
                     delete cleanedProduct.dgDetails;
+                    delete cleanedProduct.includeCommodity;
+                    delete cleanedProduct.commodityDetails;
 
                     if (p.includeDG) {
                         const cleanedDG = cleanObject(p.dgDetails, ['amount'], ['is_accessible']);
@@ -638,6 +706,11 @@
                         if (Object.keys(cleanedDG).length > 0) {
                             cleanedProduct.dangerous_goods = cleanedDG;
                         }
+                    }
+
+                    if (p.includeCommodity) {
+                        const cleanedComm = cleanObject(p.commodityDetails);
+                        Object.assign(cleanedProduct, cleanedComm);
                     }
                     return cleanedProduct;
                 });
