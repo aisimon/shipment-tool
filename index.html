@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Payload Builder</title>
+    <meta name="description" content="Construct Shipment API payloads for Shiptheory.">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+        /* Toggle Switch Styling */
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #10b981;
+        }
+        .toggle-checkbox:checked + .toggle-label::after {
+            transform: translateX(100%);
+        }
+        .toggle-dg:checked + .toggle-label-dg {
+            background-color: #f59e0b;
+        }
+        .toggle-dg:checked + .toggle-label-dg::after {
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                    <i data-lucide="terminal" class="text-blue-600"></i>
+                    Shipment Payload Builder
+                </h1>
+                <p class="text-slate-500 mt-1">Construct and validate API payloads for your logistics integrations.</p>
+            </div>
+            <a href="https://shiptheory.com/developer/index.html#introduction" target="_blank" class="flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                <i data-lucide="external-link" class="w-4 h-4"></i>
+                API Documentation
+            </a>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Form Side -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Order References -->
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <!-- <div class="flex items-center gap-2 mb-4 text-slate-700 font-semibold">
+                        <i data-lucide="hash" class="text-blue-500 w-5 h-5"></i>
+                        <h2>Order References</h2>
+                    </div> -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Reference 1</label>
+                            <div class="relative">
+                                <input type="text" id="ref1" class="w-full text-sm p-2.5 pr-10 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. S1712345678">
+                                <button onclick="generateRef1()" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-500" title="Generate New Timestamp Reference">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer mt-2">
+                                <input type="checkbox" id="append-countries" class="sr-only toggle-checkbox">
+                                <div class="toggle-label w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all"></div>
+                                <span class="ml-2 text-[10px] font-medium text-slate-500">Append Country Codes</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="block text-[10px] uppercase font-bold text-slate-400">Reference 2</label>
+                            <input type="text" id="ref2" class="w-full text-sm p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Default: Last 6 of Ref 1">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Addresses -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center gap-2 mb-4 text-blue-600 font-semibold">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                            <h2>Sender</h2>
+                        </div>
+                        <textarea id="sender-json" class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500" spellcheck="false"></textarea>
+                    </section>
+                    <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center gap-2 mb-4 text-indigo-600 font-semibold">
+                            <i data-lucide="map-pin" class="w-5 h-5"></i>
+                            <h2>Recipient</h2>
+                        </div>
+                        <textarea id="recipient-json" class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500" spellcheck="false"></textarea>
+                    </section>
+                </div>
+
+                <!-- Shipment Detail -->
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-2 text-blue-600 font-semibold">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                            <h2>Shipment Detail</h2>
+                        </div>
+                        <button onclick="syncFromProducts()" id="sync-btn" class="text-xs flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">
+                            <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+                            Sync from Products
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Weight</label>
+                            <input type="number" step="0.01" id="ship-weight" class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Parcels</label>
+                            <input type="number" id="ship-parcels" class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Value</label>
+                            <input type="number" step="0.01" id="ship-value" class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Rules Metadata</label>
+                            <input type="text" id="ship-metadata" class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Products -->
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-2 text-emerald-600 font-semibold">
+                            <i data-lucide="box" class="w-5 h-5"></i>
+                            <h2>Products Data</h2>
+                        </div>
+                        <div class="flex items-center">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="include-products" class="sr-only toggle-checkbox" checked>
+                                <div class="toggle-label w-11 h-6 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                <span class="ml-3 text-sm font-medium text-slate-600">Include Products</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="products-container" class="space-y-4">
+                        <!-- Products will be injected here -->
+                    </div>
+                    <button onclick="addProduct()" class="w-full mt-4 py-3 border-2 border-dashed border-slate-200 rounded-lg text-slate-400 hover:border-emerald-300 hover:text-emerald-500 transition-all flex items-center justify-center gap-2 text-sm font-medium">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Add Another Product
+                    </button>
+                </section>
+
+                <!-- Dangerous Goods removed from here -->
+            </div>
+
+            <!-- Preview Side -->
+            <div class="lg:col-span-5 relative">
+                <div class="sticky top-8 space-y-4">
+                    <div class="bg-slate-900 rounded-xl overflow-hidden shadow-2xl border border-slate-800">
+                        <div class="bg-slate-800 px-4 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="flex gap-1.5">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                </div>
+                                <span class="text-slate-400 text-xs font-mono ml-4">shipment_payload.json</span>
+                            </div>
+                            <button onclick="handleCopy()" id="copy-btn" class="flex items-center gap-2 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span id="copy-text">Copy Payload</span>
+                            </button>
+                        </div>
+
+                        <div class="relative group">
+                            <div id="sync-banner" class="hidden absolute top-0 left-0 right-0 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 flex items-center gap-2 z-10 backdrop-blur-sm">
+                                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-500"></i>
+                                <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider">Data is out of sync with UI</span>
+                            </div>
+                            <div class="p-4 max-h-[calc(100vh-200px)]">
+                                <textarea id="payload-preview" class="w-full h-96 min-h-[500px] text-xs md:text-sm font-mono text-blue-300 bg-transparent border-none outline-none resize-none custom-scrollbar" spellcheck="false"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl flex gap-3">
+                        <i data-lucide="info" class="text-blue-500 shrink-0 w-5 h-5"></i>
+                        <div class="text-sm text-blue-800">
+                            <p class="font-semibold mb-1">Timestamped References</p>
+                            <p class="opacity-80 leading-relaxed">
+                                Reference 1 is automatically set to <span class="font-bold">S[Unix Timestamp]</span> on load.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-12 pt-8 border-t border-slate-200">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-xs">
+                <p>Created by Simon and Google Gemini. 2026</pShiptheory >
+                <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1">
+                        <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                        Optimized for Shiptheory Developers
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // --- Defaults ---
+        const defaultSender = {
+            "company": "Global Village Workshop",
+            "firstname": "Simon ",
+            "lastname": "Li",
+            "address_line_1": "39 Duke Street",
+            "address_line_2": "-",
+            "city": "Brighton",
+            "county": "England",
+            "country": "GB",
+            "postcode": "BN1 1AG",
+            "telephone": "7729123123",
+            "mobile": "7729123456",
+            "email": "recipient@shiptheory.com"
+        };
+
+        const defaultRecipient = {
+            "firstname": "John",
+            "lastname": "Lee",
+            "address_line_1": "4609 Maple Walk Dr",
+            "city": "Lakeland",
+            "county": "Tennessee",
+            "country": "US",
+            "postcode": "38002",
+            "telephone": "+19012345678",
+            "email": "text@gmail.com"
+        };
+
+        const defaultProduct = {
+            name: "Sample Product",
+            sku: "SKU-001",
+            qty: "1",
+            value: "10.0",
+            weight: "0.5",
+            commodity_code: "1234.56.78",
+            country_of_manufacture: "GB",
+            includeDG: false,
+            dgDetails: {
+                is_dangerous: true,
+                category: "",
+                package_type: "",
+                un_number: "",
+                packing_group: "",
+                volume: "",
+                weight: "",
+                is_accessible: false
+            }
+        };
+
+        const dgCategories = [
+            { code: "DI", name: "Dry Ice" },
+            { code: "FRDG", name: "Fully Regulated Dangerous Goods" },
+            { code: "LQDG", name: "Limited Quantities Dangerous Goods" },
+            { code: "LBS2", name: "Lithium Batteries, Section II" },
+            { code: "SLB", name: "Standalone Lithium Batteries ADR Special Provision 188" },
+            { code: "BSCB", name: "Biological Substances Category B" },
+            { code: "DGEQ", name: "Dangerous Goods in Excepted Quantities" },
+            { code: "GMOM", name: "Genetically Modified Organisms and Microorganisms" },
+            { code: "RMEP", name: "Radioactive Material Excepted Package" }
+        ];
+
+        const dgPackageTypes = [
+            { code: "BAG", name: "Bag" },
+            { code: "BOX", name: "Box" },
+            { code: "CAN", name: "Can" },
+            { code: "CAR", name: "Carton" },
+            { code: "CYL", name: "Cylinder" },
+            { code: "DRU", name: "Drum" },
+            { code: "IBC", name: "Intermediate Bulk Container" }
+        ];
+
+        const dgPackingGroups = [
+            { code: "I", name: "I" },
+            { code: "II", name: "II" },
+            { code: "III", name: "III" }
+        ];
+
+        const defaultDg = {
+            category: "FRDG",
+            package_type: "BOX",
+            un_number: "UN1203",
+            class: "3",
+            packing_group: "",
+            proper_shipping_name: "Gasoline",
+            quantity: "",
+            uom: "L"
+        };
+
+        // --- State ---
+        let state = {
+            reference: `S${Date.now()}`,
+            reference2: "",
+            appendCountries: true,
+            senderJson: JSON.stringify(defaultSender, null, 2),
+            recipientJson: JSON.stringify(defaultRecipient, null, 2),
+            includeProducts: true,
+            products: [JSON.parse(JSON.stringify(defaultProduct))],
+            shipmentDetail: {
+                weight: "4",
+                parcels: "1",
+                value: "8.06",
+                rules_metadata: "Book"
+            }
+        };
+
+        // --- DOM Elements ---
+        const els = {
+            ref1: document.getElementById('ref1'),
+            ref2: document.getElementById('ref2'),
+            appendCountries: document.getElementById('append-countries'),
+            senderJson: document.getElementById('sender-json'),
+            recipientJson: document.getElementById('recipient-json'),
+            shipWeight: document.getElementById('ship-weight'),
+            shipParcels: document.getElementById('ship-parcels'),
+            shipValue: document.getElementById('ship-value'),
+            shipMetadata: document.getElementById('ship-metadata'),
+            includeProducts: document.getElementById('include-products'),
+            productsContainer: document.getElementById('products-container'),
+            payloadPreview: document.getElementById('payload-preview'),
+            copyBtn: document.getElementById('copy-btn'),
+            copyText: document.getElementById('copy-text'),
+            syncBtn: document.getElementById('sync-btn'),
+            syncBanner: document.getElementById('sync-banner')
+        };
+
+        // --- Initialization ---
+        function init() {
+            els.ref1.value = state.reference;
+            els.ref2.value = state.reference2;
+            els.appendCountries.checked = state.appendCountries;
+            els.senderJson.value = state.senderJson;
+            els.recipientJson.value = state.recipientJson;
+            els.shipWeight.value = state.shipDetail?.weight || state.shipmentDetail.weight;
+            els.shipParcels.value = state.shipmentDetail.parcels;
+            els.shipValue.value = state.shipmentDetail.value;
+            els.shipMetadata.value = state.shipmentDetail.rules_metadata;
+
+            attachListeners();
+            renderProducts();
+            updatePayload();
+            lucide.createIcons();
+        }
+
+        function attachListeners() {
+            const updateState = (key, subkey, val) => {
+                if (subkey) state[key][subkey] = val;
+                else state[key] = val;
+                updatePayload();
+            };
+
+            els.ref1.addEventListener('input', (e) => updateState('reference', null, e.target.value));
+            els.ref2.addEventListener('input', (e) => updateState('reference2', null, e.target.value));
+            els.appendCountries.addEventListener('change', (e) => {
+                state.appendCountries = e.target.checked;
+                updatePayload();
+            });
+            els.senderJson.addEventListener('input', (e) => updateState('senderJson', null, e.target.value));
+            els.recipientJson.addEventListener('input', (e) => updateState('recipientJson', null, e.target.value));
+
+            els.shipWeight.addEventListener('input', (e) => updateState('shipmentDetail', 'weight', e.target.value));
+            els.shipParcels.addEventListener('input', (e) => updateState('shipmentDetail', 'parcels', e.target.value));
+            els.shipValue.addEventListener('input', (e) => updateState('shipmentDetail', 'value', e.target.value));
+            els.shipMetadata.addEventListener('input', (e) => updateState('shipmentDetail', 'rules_metadata', e.target.value));
+
+            els.includeProducts.addEventListener('change', (e) => {
+                state.includeProducts = e.target.checked;
+                els.productsContainer.style.display = e.target.checked ? 'block' : 'none';
+                els.syncBtn.style.display = e.target.checked ? 'flex' : 'none';
+                updatePayload();
+            });
+
+            els.payloadPreview.addEventListener('input', () => {
+                els.syncBanner.classList.remove('hidden');
+            });
+        }
+
+        // --- Helpers ---
+        function generateRef1() {
+            state.reference = `S${Date.now()}`;
+            els.ref1.value = state.reference;
+            updatePayload();
+        }
+
+        function syncFromProducts() {
+            const totalWeight = state.products.reduce((sum, p) => sum + (parseFloat(p.weight) || 0) * (parseInt(p.qty) || 0), 0);
+            const totalValue = state.products.reduce((sum, p) => sum + (parseFloat(p.value) || 0) * (parseInt(p.qty) || 0), 0);
+
+            state.shipmentDetail.weight = totalWeight.toString();
+            state.shipmentDetail.value = totalValue.toString();
+
+            els.shipWeight.value = state.shipmentDetail.weight;
+            els.shipValue.value = state.shipmentDetail.value;
+
+            updatePayload();
+        }
+
+        function addProduct() {
+            state.products.push(JSON.parse(JSON.stringify(defaultProduct)));
+            state.products[state.products.length - 1].sku = `SKU-00${state.products.length}`;
+            renderProducts();
+            updatePayload();
+        }
+
+        function removeProduct(index) {
+            state.products.splice(index, 1);
+            renderProducts();
+            updatePayload();
+        }
+
+        function updateProductField(index, field, value, subfield) {
+            if (subfield) {
+                state.products[index][field][subfield] = value;
+            } else {
+                state.products[index][field] = value;
+            }
+            updatePayload();
+        }
+
+        function renderProducts() {
+            els.productsContainer.innerHTML = '';
+            state.products.forEach((product, idx) => {
+                const div = document.createElement('div');
+                div.className = 'p-5 border border-slate-100 bg-slate-50 rounded-xl relative group transition-all hover:bg-white hover:shadow-md';
+                div.innerHTML = `
+                    <button onclick="removeProduct(${idx})" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 pr-10 mb-5">
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">SKU</label>
+                            <input class="w-full text-sm p-2 border border-slate-200 rounded outline-none focus:ring-2 focus:ring-blue-500" value="${product.sku}" oninput="updateProductField(${idx}, 'sku', this.value)">
+                        </div>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Name</label>
+                            <input class="w-full text-sm p-2 border border-slate-200 rounded outline-none focus:ring-2 focus:ring-blue-500" value="${product.name}" oninput="updateProductField(${idx}, 'name', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Qty</label>
+                            <input type="number" class="w-full text-sm p-2 border border-slate-200 rounded outline-none focus:ring-2 focus:ring-blue-500" value="${product.qty}" oninput="updateProductField(${idx}, 'qty', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Weight</label>
+                            <input type="number" step="0.1" class="w-full text-sm p-2 border border-slate-200 rounded outline-none focus:ring-2 focus:ring-blue-500" value="${product.weight}" oninput="updateProductField(${idx}, 'weight', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Value</label>
+                            <input type="number" step="0.1" class="w-full text-sm p-2 border border-slate-200 rounded outline-none focus:ring-2 focus:ring-blue-500" value="${product.value}" oninput="updateProductField(${idx}, 'value', this.value)">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2 text-amber-600 font-semibold text-xs tracking-wider">
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                <span>Dangerous Goods Details</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only toggle-dg-instance" ${product.includeDG ? 'checked' : ''} onchange="toggleProductDG(${idx}, this.checked)">
+                                <div class="w-9 h-5 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                <span class="ml-2 text-[10px] font-medium text-slate-500">Enable</span>
+                            </label>
+                        </div>
+
+                        <div id="dg-fields-${idx}" class="${product.includeDG ? '' : 'hidden'} grid grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-amber-50 rounded-lg border border-amber-100">
+                             <div class="col-span-2">
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Category</label>
+                                <select class="w-full text-xs p-2 border border-amber-200 rounded outline-none bg-white focus:ring-2 focus:ring-amber-500" onchange="updateProductField(${idx}, 'dgDetails', this.value, 'category')">
+                                    <option value=""></option>
+                                    ${dgCategories.map(c => `<option value="${c.code}" ${product.dgDetails.category === c.code ? 'selected' : ''}>${c.name}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Package Type</label>
+                                <select class="w-full text-xs p-2 border border-amber-200 rounded outline-none bg-white focus:ring-2 focus:ring-amber-500" onchange="updateProductField(${idx}, 'dgDetails', this.value, 'package_type')">
+                                    <option value=""></option>
+                                    ${dgPackageTypes.map(p => `<option value="${p.code}" ${product.dgDetails.package_type === p.code ? 'selected' : ''}>${p.name}</option>`).join('')}
+                                </select>
+                            </div>
+                             <div>
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">UN Number</label>
+                                <input class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none" value="${product.dgDetails.un_number}" oninput="updateProductField(${idx}, 'dgDetails', this.value, 'un_number')">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Packing Group</label>
+                                <select class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none bg-white" onchange="updateProductField(${idx}, 'dgDetails', this.value, 'packing_group')">
+                                    <option value=""></option>
+                                    ${dgPackingGroups.map(pg => `<option value="${pg.code}" ${product.dgDetails.packing_group === pg.code ? 'selected' : ''}>${pg.name}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Volume (ml)</label>
+                                <input type="number" class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none" value="${product.dgDetails.volume}" oninput="updateProductField(${idx}, 'dgDetails', this.value, 'volume')">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-amber-700 mb-1">Weight (kg)</label>
+                                <input type="number" step="0.001" class="w-full text-xs p-2 border border-amber-200 rounded focus:ring-2 focus:ring-amber-500 outline-none" value="${product.dgDetails.weight}" oninput="updateProductField(${idx}, 'dgDetails', this.value, 'weight')">
+                            </div>
+                            <div class="flex items-center gap-3 pt-5">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only toggle-dg-instance" ${product.dgDetails.is_accessible ? 'checked' : ''} onchange="updateProductField(${idx}, 'dgDetails', this.checked, 'is_accessible')">
+                                    <div class="w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all"></div>
+                                    <span class="ml-2 text-[10px] font-medium text-amber-900 uppercase">IATA Accessible</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                els.productsContainer.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        function toggleProductDG(idx, checked) {
+            state.products[idx].includeDG = checked;
+            const container = document.getElementById(`dg-fields-${idx}`);
+            if (container) {
+                container.classList.toggle('hidden', !checked);
+            }
+            updatePayload();
+        }
+
+        function cleanObject(obj, numFields = []) {
+            const cleaned = {};
+            Object.keys(obj).forEach(key => {
+                const val = obj[key];
+                if (val !== undefined && val !== null && val !== '') {
+                    if (numFields.includes(key)) {
+                        const parsed = parseFloat(val);
+                        cleaned[key] = isNaN(parsed) ? val : parsed;
+                    } else {
+                        cleaned[key] = val;
+                    }
+                }
+            });
+            return cleaned;
+        }
+
+        function updatePayload() {
+            let senderObj = {};
+            let recipientObj = {};
+            let ref1 = state.reference;
+            const payload = {};
+
+            try { senderObj = JSON.parse(state.senderJson); } catch(e) {}
+            try { recipientObj = JSON.parse(state.recipientJson); } catch(e) {}
+
+            if (state.appendCountries) {
+                const sCode = senderObj.country || 'XX';
+                const rCode = recipientObj.country || 'XX';
+                ref1 = `${ref1}_${sCode}_${rCode}`;
+            }
+
+            let ref2 = state.reference2;
+            if (!ref2 && state.reference) {
+                ref2 = state.reference.slice(-6);
+            }
+
+            if (ref1) payload.reference = ref1;
+            if (ref2) payload.reference2 = ref2;
+
+            const cleanedDetail = cleanObject(state.shipmentDetail, ['weight', 'parcels', 'value']);
+            if (Object.keys(cleanedDetail).length > 0) {
+                payload.shipment_detail = cleanedDetail;
+            }
+
+            payload.sender = senderObj;
+            payload.recipient = recipientObj;
+
+            if (state.includeProducts) {
+                const processedProducts = state.products.map(p => {
+                    const cleanedProduct = cleanObject(p, ['value', 'qty', 'weight']);
+                    // Exclude internal state from final payload
+                    delete cleanedProduct.includeDG;
+                    delete cleanedProduct.dgDetails;
+
+                    if (p.includeDG) {
+                        const cleanedDG = cleanObject(p.dgDetails, ['volume', 'weight']);
+                        // Ensure is_dangerous is set based on the toggle state, or explicitly in details
+                        cleanedDG.is_dangerous = true;
+
+                        if (Object.keys(cleanedDG).length > 0) {
+                            cleanedProduct.dangerous_goods = cleanedDG;
+                        }
+                    }
+                    return cleanedProduct;
+                });
+
+                const filteredProducts = processedProducts.filter(p => Object.keys(p).length > 0);
+                if (filteredProducts.length > 0) {
+                    payload.products = filteredProducts;
+                }
+            }
+
+            els.payloadPreview.value = JSON.stringify(payload, null, 2);
+            els.syncBanner.classList.add('hidden');
+        }
+
+        function handleCopy() {
+            const text = els.payloadPreview.value;
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = els.copyBtn.querySelector('[data-lucide]');
+                const originalIcon = icon.getAttribute('data-lucide');
+
+                els.copyText.textContent = 'Copied!';
+                icon.setAttribute('data-lucide', 'check');
+                icon.classList.add('text-emerald-400');
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    els.copyText.textContent = 'Copy Payload';
+                    const currentIcon = els.copyBtn.querySelector('[data-lucide]');
+                    if (currentIcon) {
+                        currentIcon.setAttribute('data-lucide', originalIcon);
+                        currentIcon.classList.remove('text-emerald-400');
+                        lucide.createIcons();
+                    }
+                }, 2000);
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
