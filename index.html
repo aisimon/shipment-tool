@@ -46,6 +46,12 @@
         .toggle-dg:checked + .toggle-label-dg::after {
             transform: translateX(100%);
         }
+        .toggle-commodity:checked + .toggle-label-commodity {
+            background-color: #3b82f6;
+        }
+        .toggle-commodity:checked + .toggle-label-commodity::after {
+            transform: translateX(100%);
+        }
     </style>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900">
@@ -514,8 +520,8 @@
                                 <span>Dangerous Goods Details</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only toggle-dg-instance" ${product.includeDG ? 'checked' : ''} onchange="toggleProductDG(${idx}, this.checked)">
-                                <div class="w-9 h-5 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                <input type="checkbox" class="sr-only toggle-dg" ${product.includeDG ? 'checked' : ''} onchange="toggleProductDG(${idx}, this.checked)">
+                                <div class="toggle-label-dg w-9 h-5 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                                 <span class="ml-2 text-[10px] font-medium text-slate-500">Enable</span>
                             </label>
                         </div>
@@ -579,8 +585,8 @@
                                     Copy to All
                                 </button>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only toggle-commodity-instance" ${product.includeCommodity ? 'checked' : ''} onchange="toggleProductCommodity(${idx}, this.checked)">
-                                    <div class="w-9 h-5 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                    <input type="checkbox" class="sr-only toggle-commodity" ${product.includeCommodity ? 'checked' : ''} onchange="toggleProductCommodity(${idx}, this.checked)">
+                                    <div class="toggle-label-commodity w-9 h-5 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                                     <span class="ml-2 text-[10px] font-medium text-slate-500">Enable</span>
                                 </label>
                             </div>
