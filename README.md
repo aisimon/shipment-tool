@@ -14,7 +14,11 @@ It is currently published at https://aisimon.github.io/shipment-tool/
 - **Product Management**: Add multiple items with per-product **Dangerous Goods** (DG) support.
 - **Smart Sync**: Calculate total weight and value from the product list automatically.
 
+Addresses are random and no personal contact are shared, with some of them are McDonald's all over the world.
+
 ## Quick Start
+Visit the published page https://aisimon.github.io/shipment-tool/, or hosted it locally:
+
 1. Clone the repo: `git clone https://github.com/aisimon/shipment-tool.git`
 2. Open `index.html` in your browser, or run `python3 -m http.server 8123` to serve it
 
