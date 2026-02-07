@@ -468,6 +468,21 @@
 
         // --- Initialization ---
         function init() {
+            // Load from LocalStorage
+            const savedRealtime = localStorage.getItem('shiptheory_realtime');
+            const savedRef1 = localStorage.getItem('shiptheory_ref1');
+            const savedRef2 = localStorage.getItem('shiptheory_ref2');
+
+            if (savedRealtime !== null) {
+                state.realtimeRef = savedRealtime === 'true';
+            }
+            if (!state.realtimeRef && savedRef1 !== null) {
+                state.reference = savedRef1;
+            }
+            if (savedRef2 !== null) {
+                state.reference2 = savedRef2;
+            }
+
             els.ref1.value = state.reference;
             els.ref2.value = state.reference2;
             els.realtimeRef.checked = state.realtimeRef;
@@ -511,15 +526,24 @@
             els.ref1.addEventListener('input', (e) => {
                 state.realtimeRef = false;
                 els.realtimeRef.checked = false;
+                localStorage.setItem('shiptheory_realtime', 'false');
+                localStorage.setItem('shiptheory_ref1', e.target.value);
                 updateState('reference', null, e.target.value);
             });
-            els.ref2.addEventListener('input', (e) => updateState('reference2', null, e.target.value));
+            els.ref2.addEventListener('input', (e) => {
+                localStorage.setItem('shiptheory_ref2', e.target.value);
+                updateState('reference2', null, e.target.value);
+            });
             els.realtimeRef.addEventListener('change', (e) => {
                 state.realtimeRef = e.target.checked;
+                localStorage.setItem('shiptheory_realtime', state.realtimeRef);
                 if (state.realtimeRef) {
                     state.reference = `S${Math.floor(Date.now() / 1000)}`;
                     els.ref1.value = state.reference;
                     updatePayload();
+                } else {
+                    // When turning off, save the current value
+                    localStorage.setItem('shiptheory_ref1', state.reference);
                 }
             });
             els.appendCountries.addEventListener('change', (e) => {
@@ -555,7 +579,9 @@
         function generateRef1() {
             state.realtimeRef = false;
             els.realtimeRef.checked = false;
+            localStorage.setItem('shiptheory_realtime', 'false');
             state.reference = `S${Math.floor(Date.now() / 1000)}`;
+            localStorage.setItem('shiptheory_ref1', state.reference);
             els.ref1.value = state.reference;
             updatePayload();
         }
