@@ -23,7 +23,7 @@ Visit the published page https://aisimon.github.io/shipment-tool/, or hosted it 
 2. Open `index.html` in your browser, or run `python3 -m http.server 8123` to serve it
 
 ## Tech
-HTML5, Vanilla JS, [Tailwind CSS](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/).
+HTML5, Vanilla JS, [Tailwind CSS](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/). It is 95% written in Google Gemini.
 
 ## Roadmap or todo
 - Allow entering access token to directly POST to Shiptheory to create shipments. Never save access token.
