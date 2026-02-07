@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,45 +16,57 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
+
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-track {
             background: #111827;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #374151;
             border-radius: 10px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #4b5563;
         }
+
         /* Toggle Switch Styling */
-        .toggle-checkbox:checked + .toggle-label {
+        .toggle-checkbox:checked+.toggle-label {
             background-color: #10b981;
         }
-        .toggle-checkbox:checked + .toggle-label::after {
+
+        .toggle-checkbox:checked+.toggle-label::after {
             transform: translateX(100%);
         }
-        .toggle-dg:checked + .toggle-label-dg {
+
+        .toggle-dg:checked+.toggle-label-dg {
             background-color: #f59e0b;
         }
-        .toggle-dg:checked + .toggle-label-dg::after {
+
+        .toggle-dg:checked+.toggle-label-dg::after {
             transform: translateX(100%);
         }
-        .toggle-commodity:checked + .toggle-label-commodity {
+
+        .toggle-commodity:checked+.toggle-label-commodity {
             background-color: #3b82f6;
         }
-        .toggle-commodity:checked + .toggle-label-commodity::after {
+
+        .toggle-commodity:checked+.toggle-label-commodity::after {
             transform: translateX(100%);
         }
     </style>
 </head>
+
 <body class="min-h-screen bg-slate-50 text-slate-900">
 
     <div class="max-w-7xl mx-auto p-4 md:p-8">
@@ -65,21 +78,26 @@
                     Shipment Payload Builder
                 </h1>
                 <p class="text-slate-500 mt-1">Construct and Shipment API payloads for
-                    <a href="https://shiptheory.com/" target="_blank" class="text-blue-600 hover:text-blue-700 transition-colors">
-                        Shiptheory</a></p>
+                    <a href="https://shiptheory.com/" target="_blank"
+                        class="text-blue-600 hover:text-blue-700 transition-colors">
+                        Shiptheory</a>
+                </p>
             </div>
             <div class="flex items-center gap-4">
-                <a href="https://shiptheory.com/developer/index.html#introduction" target="_blank" class="flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                <a href="https://shiptheory.com/developer/index.html#introduction" target="_blank"
+                    class="flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
                     API Documentation
                 </a>
                 <span class="text-slate-300">|</span>
-                <a href="https://shiptheory.com/developer/index.html#enums" target="_blank" class="flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                <a href="https://shiptheory.com/developer/index.html#enums" target="_blank"
+                    class="flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
                     Enums
                 </a>
                 <span class="text-slate-300">|</span>
-                <a href="https://github.com/aisimon/shipment-tool" target="_blank" class="flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                <a href="https://github.com/aisimon/shipment-tool" target="_blank"
+                    class="flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
                     <i data-lucide="github" class="w-4 h-4"></i>GitHub
                 </a>
             </div>
@@ -99,22 +117,31 @@
                         <div>
                             <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Reference 1</label>
                             <div class="relative">
-                                <input type="text" id="ref1" class="w-full text-sm p-2.5 pr-10 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. S1712345678">
-                                <button onclick="generateRef1()" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-500" title="Generate New Timestamp Reference">
+                                <input type="text" id="ref1"
+                                    class="w-full text-sm p-2.5 pr-10 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    placeholder="e.g. S1712345678">
+                                <button onclick="generateRef1()"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-500"
+                                    title="Generate New Timestamp Reference">
                                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                                 </button>
                             </div>
                             <div class="flex items-center gap-4 mt-2">
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="append-countries" class="sr-only toggle-checkbox">
-                                    <div class="toggle-label w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all"></div>
-                                    <span class="ml-2 text-[10px] font-medium text-slate-500">Append Country Codes</span>
+                                    <div
+                                        class="toggle-label w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all">
+                                    </div>
+                                    <span class="ml-2 text-[10px] font-medium text-slate-500">Append Country
+                                        Codes</span>
                                 </label>
                             </div>
                         </div>
                         <div class="flex flex-col gap-2">
                             <label class="block text-[10px] uppercase font-bold text-slate-400">Reference 2</label>
-                            <input type="text" id="ref2" class="w-full text-sm p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Default: Last 6 of Ref 1">
+                            <input type="text" id="ref2"
+                                class="w-full text-sm p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder="Default: Last 6 of Ref 1">
                         </div>
                     </div>
                 </section>
@@ -126,7 +153,8 @@
                             <i data-lucide="settings" class="w-5 h-5"></i>
                             <h2>Shipment Detail</h2>
                         </div>
-                        <button onclick="syncFromProducts()" id="sync-btn" class="text-xs flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">
+                        <button onclick="syncFromProducts()" id="sync-btn"
+                            class="text-xs flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">
                             <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
                             Sync from Products
                         </button>
@@ -134,19 +162,24 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Weight</label>
-                            <input type="number" step="0.01" id="ship-weight" class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="number" step="0.01" id="ship-weight"
+                                class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Parcels</label>
-                            <input type="number" id="ship-parcels" class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="number" id="ship-parcels"
+                                class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Value</label>
-                            <input type="number" step="0.01" id="ship-value" class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="number" step="0.01" id="ship-value"
+                                class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Rules Metadata</label>
-                            <input type="text" id="ship-metadata" class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Rules
+                                Metadata</label>
+                            <input type="text" id="ship-metadata"
+                                class="w-full text-sm p-2 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                     </div>
                 </section>
@@ -161,25 +194,33 @@
                         <div class="flex items-center">
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="show-addresses" class="sr-only toggle-checkbox" checked>
-                                <div class="toggle-label w-11 h-6 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                <div
+                                    class="toggle-label w-11 h-6 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all">
+                                </div>
                                 <span class="ml-3 text-sm font-medium text-slate-600">Show Addresses</span>
                             </label>
                         </div>
                     </div>
                     <div id="addresses-panel" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                             <div class="flex items-center gap-2 mb-2 text-blue-600 font-semibold text-[10px] uppercase tracking-wider">
+                            <div
+                                class="flex items-center gap-2 mb-2 text-blue-600 font-semibold text-[10px] uppercase tracking-wider">
                                 <i data-lucide="user" class="w-3.5 h-3.5"></i>
                                 <span>Sender Details</span>
                             </div>
-                            <textarea id="sender-json" class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500" spellcheck="false"></textarea>
+                            <textarea id="sender-json"
+                                class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500"
+                                spellcheck="false"></textarea>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2 mb-2 text-indigo-600 font-semibold text-[10px] uppercase tracking-wider">
+                            <div
+                                class="flex items-center gap-2 mb-2 text-indigo-600 font-semibold text-[10px] uppercase tracking-wider">
                                 <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
                                 <span>Recipient Details</span>
                             </div>
-                            <textarea id="recipient-json" class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500" spellcheck="false"></textarea>
+                            <textarea id="recipient-json"
+                                class="w-full h-64 p-3 font-mono text-xs bg-slate-900 text-green-400 rounded-lg border-none focus:ring-2 focus:ring-blue-500"
+                                spellcheck="false"></textarea>
                         </div>
                     </div>
                 </section>
@@ -194,7 +235,9 @@
                         <div class="flex items-center">
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="include-products" class="sr-only toggle-checkbox" checked>
-                                <div class="toggle-label w-11 h-6 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                <div
+                                    class="toggle-label w-11 h-6 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all">
+                                </div>
                                 <span class="ml-3 text-sm font-medium text-slate-600">Include Products</span>
                             </label>
                         </div>
@@ -202,7 +245,8 @@
                     <div id="products-container" class="space-y-4">
                         <!-- Products will be injected here -->
                     </div>
-                    <button onclick="addProduct()" class="w-full mt-4 py-3 border-2 border-dashed border-slate-200 rounded-lg text-slate-400 hover:border-emerald-300 hover:text-emerald-500 transition-all flex items-center justify-center gap-2 text-sm font-medium">
+                    <button onclick="addProduct()"
+                        class="w-full mt-4 py-3 border-2 border-dashed border-slate-200 rounded-lg text-slate-400 hover:border-emerald-300 hover:text-emerald-500 transition-all flex items-center justify-center gap-2 text-sm font-medium">
                         <i data-lucide="plus" class="w-4 h-4"></i> Add Another Product
                     </button>
                 </section>
@@ -223,19 +267,24 @@
                                 </div>
                                 <span class="text-slate-400 text-xs font-mono ml-4">shipment_payload.json</span>
                             </div>
-                            <button onclick="handleCopy()" id="copy-btn" class="flex items-center gap-2 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded transition-colors">
+                            <button onclick="handleCopy()" id="copy-btn"
+                                class="flex items-center gap-2 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded transition-colors">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                                 <span id="copy-text">Copy Payload</span>
                             </button>
                         </div>
 
                         <div class="relative group">
-                            <div id="sync-banner" class="hidden absolute top-0 left-0 right-0 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 flex items-center gap-2 z-10 backdrop-blur-sm">
+                            <div id="sync-banner"
+                                class="hidden absolute top-0 left-0 right-0 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 flex items-center gap-2 z-10 backdrop-blur-sm">
                                 <i data-lucide="alert-circle" class="w-4 h-4 text-amber-500"></i>
-                                <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider">Data is out of sync with UI</span>
+                                <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider">Data is out
+                                    of sync with UI</span>
                             </div>
                             <div class="p-4 max-h-[calc(100vh-200px)]">
-                                <textarea id="payload-preview" class="w-full h-[650px] min-h-[650px] text-xs md:text-sm font-mono text-blue-300 bg-transparent border-none outline-none resize-none custom-scrollbar" spellcheck="false"></textarea>
+                                <textarea id="payload-preview"
+                                    class="w-full h-[650px] min-h-[650px] text-xs md:text-sm font-mono text-blue-300 bg-transparent border-none outline-none resize-none custom-scrollbar"
+                                    spellcheck="false"></textarea>
                             </div>
                         </div>
                     </div>
@@ -245,7 +294,8 @@
                         <div class="text-sm text-blue-800">
                             <p class="font-semibold mb-1">Timestamped References</p>
                             <p class="opacity-80 leading-relaxed">
-                                Reference 1 is automatically set to <span class="font-bold">S[Unix Timestamp]</span> on load.
+                                Reference 1 is automatically set to <span class="font-bold">S[Unix Timestamp]</span> on
+                                load.
                             </p>
                         </div>
                     </div>
@@ -255,7 +305,7 @@
 
         <footer class="mt-12 pt-8 border-t border-slate-200">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-xs">
-                <p>Created by Simon and Google Gemini. 2026</pShiptheory >
+                <p>Created by Simon and Google Gemini. 2026</pShiptheory>
                 <div class="flex items-center gap-4">
                     <span class="flex items-center gap-1">
                         <i data-lucide="zap" class="w-3.5 h-3.5"></i>
@@ -270,22 +320,22 @@
         // --- Defaults ---
         const defaultSender = {
             "company": "Global Village Workshop",
-            "firstname": "Simon ",
-            "lastname": "Peter",
+            "firstname": "Simon",
+            "lastname": "Pr",
             "address_line_1": "39 Duke Street",
             "address_line_2": "-",
             "city": "Brighton",
             "county": "England",
             "country": "GB",
             "postcode": "BN1 1AG",
-            "telephone": "7729123123",
-            "mobile": "7729123456",
+            "telephone": "7123456789",
+            "mobile": "7123456789",
             "email": "sender@test.com"
         };
 
         const defaultRecipient = {
             "firstname": "John",
-            "lastname": "Lee",
+            "lastname": "L",
             "address_line_1": "4609 Maple Walk Dr",
             "city": "Lakeland",
             "county": "Tennessee",
@@ -705,8 +755,8 @@
             let ref1 = state.reference;
             const payload = {};
 
-            try { senderObj = JSON.parse(state.senderJson); } catch(e) {}
-            try { recipientObj = JSON.parse(state.recipientJson); } catch(e) {}
+            try { senderObj = JSON.parse(state.senderJson); } catch (e) { }
+            try { recipientObj = JSON.parse(state.recipientJson); } catch (e) { }
 
             if (state.appendCountries) {
                 const sCode = senderObj.country || 'XX';
@@ -792,4 +842,5 @@
         window.onload = init;
     </script>
 </body>
+
 </html>
