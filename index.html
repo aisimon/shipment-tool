@@ -128,6 +128,13 @@
                             </div>
                             <div class="flex items-center gap-4 mt-2">
                                 <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="realtime-ref" class="sr-only toggle-checkbox" checked>
+                                    <div
+                                        class="toggle-label w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all">
+                                    </div>
+                                    <span class="ml-2 text-[10px] font-medium text-slate-500">Real-time</span>
+                                </label>
+                                <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="append-countries" class="sr-only toggle-checkbox">
                                     <div
                                         class="toggle-label w-7 h-4 bg-slate-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all">
@@ -294,8 +301,8 @@
                         <div class="text-sm text-blue-800">
                             <p class="font-semibold mb-1">Timestamped References</p>
                             <p class="opacity-80 leading-relaxed">
-                                Reference 1 is automatically set to <span class="font-bold">S[Unix Timestamp]</span> on
-                                load.
+                                Reference 1 is automatically set to <span class="font-bold">S[Unix Timestamp]</span> and
+                                can update in real-time.
                             </p>
                         </div>
                     </div>
@@ -419,8 +426,9 @@
 
         // --- State ---
         let state = {
-            reference: `S${Date.now()}`,
+            reference: `S${Math.floor(Date.now() / 1000)}`,
             reference2: "",
+            realtimeRef: true,
             appendCountries: true,
             senderJson: JSON.stringify(defaultSender, null, 2),
             recipientJson: JSON.stringify(defaultRecipient, null, 2),
@@ -439,6 +447,7 @@
         const els = {
             ref1: document.getElementById('ref1'),
             ref2: document.getElementById('ref2'),
+            realtimeRef: document.getElementById('realtime-ref'),
             appendCountries: document.getElementById('append-countries'),
             senderJson: document.getElementById('sender-json'),
             recipientJson: document.getElementById('recipient-json'),
@@ -461,6 +470,7 @@
         function init() {
             els.ref1.value = state.reference;
             els.ref2.value = state.reference2;
+            els.realtimeRef.checked = state.realtimeRef;
             els.appendCountries.checked = state.appendCountries;
             els.showAddresses.checked = state.showAddresses;
             els.includeProducts.checked = state.includeProducts;
@@ -480,6 +490,15 @@
             renderProducts();
             updatePayload();
             lucide.createIcons();
+
+            // Start Real-time Ref interval
+            setInterval(() => {
+                if (state.realtimeRef) {
+                    state.reference = `S${Math.floor(Date.now() / 1000)}`;
+                    els.ref1.value = state.reference;
+                    updatePayload();
+                }
+            }, 1000);
         }
 
         function attachListeners() {
@@ -489,8 +508,20 @@
                 updatePayload();
             };
 
-            els.ref1.addEventListener('input', (e) => updateState('reference', null, e.target.value));
+            els.ref1.addEventListener('input', (e) => {
+                state.realtimeRef = false;
+                els.realtimeRef.checked = false;
+                updateState('reference', null, e.target.value);
+            });
             els.ref2.addEventListener('input', (e) => updateState('reference2', null, e.target.value));
+            els.realtimeRef.addEventListener('change', (e) => {
+                state.realtimeRef = e.target.checked;
+                if (state.realtimeRef) {
+                    state.reference = `S${Math.floor(Date.now() / 1000)}`;
+                    els.ref1.value = state.reference;
+                    updatePayload();
+                }
+            });
             els.appendCountries.addEventListener('change', (e) => {
                 state.appendCountries = e.target.checked;
                 updatePayload();
@@ -522,7 +553,9 @@
 
         // --- Helpers ---
         function generateRef1() {
-            state.reference = `S${Date.now()}`;
+            state.realtimeRef = false;
+            els.realtimeRef.checked = false;
+            state.reference = `S${Math.floor(Date.now() / 1000)}`;
             els.ref1.value = state.reference;
             updatePayload();
         }
