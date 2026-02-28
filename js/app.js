@@ -6,7 +6,8 @@ import {
     dgPackageTypes,
     dgPackingGroups,
     dgUnits,
-    dgTemplates
+    dgTemplates,
+    apiEnvironments
 } from './data.js';
 
 // --- State ---
@@ -25,7 +26,9 @@ let state = {
         parcels: "1",
         value: "12.5",
         rules_metadata: ""
-    }
+    },
+    apiToken: localStorage.getItem('shiptheory_token') || "",
+    apiEnv: localStorage.getItem('shiptheory_env') || (apiEnvironments[0] ? apiEnvironments[0].url : "")
 };
 
 // --- DOM Elements ---
@@ -52,8 +55,17 @@ function init() {
         syncBtn: document.getElementById('sync-btn'),
         syncBanner: document.getElementById('sync-banner'),
         showAddresses: document.getElementById('show-addresses'),
-        addressesPanel: document.getElementById('addresses-panel')
+        addressesPanel: document.getElementById('addresses-panel'),
+        apiEnv: document.getElementById('api-env'),
+        accessToken: document.getElementById('access-token'),
+        envUrlDisplay: document.getElementById('env-url-display'),
+        postBtn: document.getElementById('post-shipment-btn')
     };
+
+    // Render API Environments
+    els.apiEnv.innerHTML = apiEnvironments.map(env =>
+        `<option value="${env.url}">${env.name}</option>`
+    ).join('');
 
     // Load from LocalStorage
     const savedRealtime = localStorage.getItem('shiptheory_realtime');
@@ -82,6 +94,10 @@ function init() {
     els.shipParcels.value = state.shipmentDetail.parcels;
     els.shipValue.value = state.shipmentDetail.value;
     els.shipMetadata.value = state.shipmentDetail.rules_metadata;
+
+    els.apiEnv.value = state.apiEnv;
+    els.envUrlDisplay.textContent = state.apiEnv;
+    els.accessToken.value = state.apiToken;
 
     // Sync visibility
     els.addressesPanel.style.display = state.showAddresses ? 'grid' : 'none';
@@ -163,6 +179,19 @@ function attachListeners() {
     els.payloadPreview.addEventListener('input', () => {
         els.syncBanner.classList.remove('hidden');
     });
+
+    els.apiEnv.addEventListener('change', (e) => {
+        state.apiEnv = e.target.value;
+        els.envUrlDisplay.textContent = e.target.value;
+        localStorage.setItem('shiptheory_env', state.apiEnv);
+    });
+
+    els.accessToken.addEventListener('input', (e) => {
+        state.apiToken = e.target.value;
+        localStorage.setItem('shiptheory_token', state.apiToken);
+    });
+
+    els.postBtn.addEventListener('click', postShipment);
 }
 
 // --- Helpers Exposed to Window ---
@@ -525,6 +554,65 @@ export function handleCopy() {
     });
 }
 
+export function toggleTokenVisibility() {
+    const input = els.accessToken;
+    const icon = document.getElementById('token-eye-icon');
+    if (input.type === "password") {
+        input.type = "text";
+        icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+        input.type = "password";
+        icon.setAttribute('data-lucide', 'eye');
+    }
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+}
+
+async function postShipment() {
+    if (!state.apiToken) {
+        alert("Please enter an access token first.");
+        return;
+    }
+
+    const payload = els.payloadPreview.value;
+    const btn = els.postBtn;
+    const originalText = btn.innerHTML;
+
+    try {
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Processing...';
+        if (window.lucide) window.lucide.createIcons();
+
+        const response = await fetch(state.apiEnv, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${state.apiToken}`,
+                'Accept': 'application/json'
+            },
+            body: payload
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert("Shipment posted successfully!");
+            console.log("Success:", result);
+        } else {
+            alert(`Error: ${result.message || response.statusText}`);
+            console.error("Error Response:", result);
+        }
+    } catch (error) {
+        alert(`Network Error: ${error.message}`);
+        console.error("Request Error:", error);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (window.lucide) window.lucide.createIcons();
+    }
+}
+
 // Expose functions to window for HTML event handlers
 window.generateRef1 = generateRef1;
 window.syncFromProducts = syncFromProducts;
@@ -536,5 +624,6 @@ window.toggleProductDG = toggleProductDG;
 window.toggleProductCommodity = toggleProductCommodity;
 window.copyCommodityToAll = copyCommodityToAll;
 window.handleCopy = handleCopy;
+window.toggleTokenVisibility = toggleTokenVisibility;
 
 window.onload = init;

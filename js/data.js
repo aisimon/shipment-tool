@@ -118,3 +118,9 @@ export const defaultDg = {
     amount: "",
     unit: "g"
 };
+
+export const apiEnvironments = [
+    { name: "Local", url: "https://shiptheory.local/v1/shipments" },
+    { name: "Production", url: "https://api.shiptheory.com/v1/shipments" }
+];
+
