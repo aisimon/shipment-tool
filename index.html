@@ -413,13 +413,35 @@
             { code: "g", name: "g" },
         ];
 
+        const dgTemplates = [
+            {
+                name: "Luxury Perfume Samples",
+                commodity_code: "330300",
+                commodity_description: "Perfumes and toilet waters",
+                un_number: "UN1266",
+                category: "DGEQ",
+                amount: "30",
+                unit: "ml",
+                package_type: "BOX"
+            },
+            {
+                name: "Lab Reagent (Methanol)",
+                commodity_code: "290511",
+                commodity_description: "Methanol (methyl alcohol)",
+                un_number: "UN1230",
+                category: "DGEQ",
+                amount: "30",
+                unit: "ml",
+                package_type: "BOX"
+            }
+        ];
+
         const defaultDg = {
             category: "FRDG",
             package_type: "BOX",
             un_number: "UN1203",
             class: "3",
             packing_group: "",
-            proper_shipping_name: "Gasoline",
             amount: "",
             unit: "g"
         };
@@ -624,6 +646,27 @@
             updatePayload();
         }
 
+        function applyDGTemplate(idx, templateIdx) {
+            if (templateIdx === "") return;
+            const template = dgTemplates[templateIdx];
+            const product = state.products[idx];
+
+            product.includeDG = true;
+            product.includeCommodity = true;
+
+            product.dgDetails.category = template.category;
+            product.dgDetails.un_number = template.un_number;
+            product.dgDetails.amount = template.amount;
+            product.dgDetails.unit = template.unit;
+            product.dgDetails.package_type = template.package_type;
+
+            product.commodityDetails.commodity_code = template.commodity_code;
+            product.commodityDetails.commodity_description = template.commodity_description;
+
+            renderProducts();
+            updatePayload();
+        }
+
         function renderProducts() {
             els.productsContainer.innerHTML = '';
             state.products.forEach((product, idx) => {
@@ -657,7 +700,18 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-200 pt-4">
+                    <div class="border-t border-slate-200 pt-4 mt-4">
+                        <div class="mb-4">
+                            <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 flex items-center gap-1">
+                                <i data-lucide="zap" class="w-3 h-3 text-amber-500"></i>
+                                Quick Templates
+                            </label>
+                            <select class="w-full text-xs p-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-500 bg-amber-50/30" onchange="applyDGTemplate(${idx}, this.value)">
+                                <option value="">-- Apply a Dangerous Goods Template --</option>
+                                ${dgTemplates.map((t, i) => `<option value="${i}">${t.name}</option>`).join('')}
+                            </select>
+                        </div>
+
                         <div class="flex items-center justify-between mb-3">
                             <label for="dg-toggle-${idx}" class="flex items-center gap-2 text-amber-600 font-semibold text-xs tracking-wider uppercase cursor-pointer select-none">
                                 <i data-lucide="alert-triangle" class="w-4 h-4"></i>
@@ -713,6 +767,7 @@
                                     <option value="true" ${product.dgDetails.is_accessible === "true" || product.dgDetails.is_accessible === true ? 'selected' : ''}>True</option>
                                     <option value="false" ${product.dgDetails.is_accessible === "false" || product.dgDetails.is_accessible === false ? 'selected' : ''}>False</option>
                                 </select>
+                            </div>
                             </div>
                         </div>
                     </div>
