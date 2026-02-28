@@ -1,0 +1,45 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #111827;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #4b5563;
+}
+
+/* Toggle Switch Styling */
+.toggle-checkbox:checked+.toggle-label {
+    background-color: #10b981;
+}
+
+.toggle-checkbox:checked+.toggle-label::after {
+    transform: translateX(100%);
+}
+
+.toggle-dg:checked+.toggle-label-dg {
+    background-color: #f59e0b;
+}
+
+.toggle-dg:checked+.toggle-label-dg::after {
+    transform: translateX(100%);
+}
+
+.toggle-commodity:checked+.toggle-label-commodity {
+    background-color: #3b82f6;
+}
+
+.toggle-commodity:checked+.toggle-label-commodity::after {
+    transform: translateX(100%);
+}
