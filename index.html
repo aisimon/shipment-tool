@@ -253,44 +253,6 @@
                             </p>
                         </div>
                     </div>
-
-                    <!-- API Configuration -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                        <div class="flex items-center gap-2 text-slate-700 font-semibold mb-2">
-                            <i data-lucide="globe" class="w-5 h-5 text-blue-600"></i>
-                            <h2>API Configuration</h2>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Environment</label>
-                                <select id="api-env" class="w-full text-sm p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50">
-                                </select>
-                                <div id="env-url-display" class="mt-1.5 text-[10px] font-mono text-slate-400 truncate">
-                                    https://shiptheory.local/v1/shipments
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Access Token</label>
-                                <div class="relative">
-                                    <input type="password" id="access-token"
-                                        class="w-full text-sm p-2.5 pr-10 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                        placeholder="Enter your Shiptheory API Token">
-                                    <button onclick="toggleTokenVisibility()"
-                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-500">
-                                        <i data-lucide="eye" id="token-eye-icon" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button id="post-shipment-btn"
-                            class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-100">
-                            <i data-lucide="send" class="w-4 h-4"></i>
-                            Post Shipment
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
